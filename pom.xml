@@ -8,49 +8,40 @@
     <artifactId>postal-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>postal-service</name>
 
     <modules>
+        <module>postal-gui</module>
         <module>postal-rest</module>
         <module>letter-worker</module>
         <module>package-worker</module>
-        <module>postal-gui</module>
     </modules>
 
-    <!-- Gemeinsame Versionen / Plugins für alle Kinder -->
-    <properties>
-        <maven.compiler.release>17</maven.compiler.release>
-        <spring.boot.version>3.3.3</spring.boot.version>
-    </properties>
-
+    <!-- optional, aber praktisch, wenn postal-rest Spring Boot nutzt -->
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot BOM nur für postal-rest relevant, aber hier zentral verwaltet -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
+                <version>3.3.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <release>${maven.compiler.release}</release>
-                    </configuration>
-                </plugin>
+                <!-- Damit postal-rest später mit spring-boot:run sauber startet -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.version}</version>
+                    <version>3.3.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
