@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.PostalController" spacing="10">
+    <padding>
+        <Insets top="12" right="12" bottom="12" left="12"/>
+    </padding>
+
+    <children>
+        <!-- Eingabezeile -->
+        <HBox spacing="16" alignment="TOP_LEFT">
+            <children>
+                <!-- LETTER -->
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="90"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <children>
+                        <Label text="Letter Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="letterNameField" promptText="Name"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                   GridPane.hgrow="ALWAYS" maxWidth="Infinity"/>
+
+                        <Label text="Country:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="letterCountryField" promptText="AT / DE / CH"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                   GridPane.hgrow="ALWAYS" maxWidth="Infinity">
+                            <tooltip><Tooltip text="Nur AT, DE oder CH"/></tooltip>
+                        </TextField>
+
+                        <Button text="Send Letter" onAction="#handleSendLetter"
+                                GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </children>
+                    <padding><Insets bottom="4"/></padding>
+                </GridPane>
+
+                <Separator orientation="VERTICAL"/>
+
+                <!-- PACKAGE -->
+                <GridPane hgap="8" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="90"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <children>
+                        <Label text="Package Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="packageNameField" promptText="Name"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                   GridPane.hgrow="ALWAYS" maxWidth="Infinity"/>
+
+                        <Label text="Weight (kg):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="packageWeightField" promptText="z. B. 12.5"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                   GridPane.hgrow="ALWAYS" maxWidth="Infinity">
+                            <tooltip><Tooltip text="Weniger als 25.0 kg wird 'send'"/></tooltip>
+                        </TextField>
+
+                        <Button text="Send Package" onAction="#handleSendPackage"
+                                GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </children>
+                    <padding><Insets bottom="4"/></padding>
+                </GridPane>
+
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button text="Refresh Status" onAction="#handleRefresh" minWidth="140"/>
+            </children>
+        </HBox>
+
+        <!-- Tabelle -->
+        <TableView fx:id="statusTable" VBox.vgrow="ALWAYS">
+            <placeholder>
+                <Label text="Noch keine Daten — sende einen Brief oder ein Paket und klicke 'Refresh Status'."/>
+            </placeholder>
+            <columns>
+                <TableColumn fx:id="typeCol" text="Type" prefWidth="100"/>
+                <TableColumn fx:id="idCol" text="ID" prefWidth="300"/>
+                <TableColumn fx:id="nameCol" text="Name" prefWidth="160"/>
+                <TableColumn fx:id="countryCol" text="Country" prefWidth="110"/>
+                <TableColumn fx:id="weightCol" text="Weight (kg)" prefWidth="120"/>
+                <TableColumn fx:id="statusCol" text="Status" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </children>
+</VBox>
