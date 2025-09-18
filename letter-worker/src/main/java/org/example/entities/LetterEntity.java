@@ -1,30 +1,33 @@
 package org.example.entities;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "packages") // muss zum Tabellennamen in postal-rest passen
-public class PackageEntity {
+@Table(name = "letters")
+public class LetterEntity {
+
     @Id
     @Column(columnDefinition = "uuid")
     private UUID id;
 
     private String name;
 
-    @Column(name = "weight_kg")
-    private BigDecimal weightKg;
+    @Column(length = 5)
+    private String country;
 
     private String status;
 
-    // getters/setters
+    // --- getters/setters ---
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public BigDecimal getWeightKg() { return weightKg; }
-    public void setWeightKg(BigDecimal weightKg) { this.weightKg = weightKg; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }

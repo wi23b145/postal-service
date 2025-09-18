@@ -5,8 +5,7 @@ import org.example.entities.LetterEntity;
 import org.example.entities.PackageEntity;
 import org.example.repo.LetterRepository;
 import org.example.repo.PackageRepository;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Value;
+import org.example.service.MessagePublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,72 +20,70 @@ public class ApiController {
 
     private final LetterRepository letterRepo;
     private final PackageRepository packageRepo;
-    private final AmqpTemplate amqpTemplate;
-
-    private final String letterQueue;
-    private final String packageQueue;
+    private final MessagePublisher publisher; // statt AmqpTemplate direkt
 
     public ApiController(
             LetterRepository letterRepo,
             PackageRepository packageRepo,
-            AmqpTemplate amqpTemplate,
-            @Value("${app.queues.letter}") String letterQueue,
-            @Value("${app.queues.pack}") String packageQueue
+            MessagePublisher publisher
     ) {
         this.letterRepo = letterRepo;
         this.packageRepo = packageRepo;
-        this.amqpTemplate = amqpTemplate;
-        this.letterQueue = letterQueue;
-        this.packageQueue = packageQueue;
+        this.publisher = publisher;
     }
 
-    // POST /api/letter/{country}/{name}
+    // --- LETTER --------------------------------------------------------------
+
     @PostMapping("/letter/{country}/{name}")
     public ResponseEntity<UUID> sendLetter(
-            @PathVariable("country") String country,
-            @PathVariable("name")    String name
+            @PathVariable String country,
+            @PathVariable String name
     ) {
+        // kein Validieren: alles annehmen
         LetterEntity e = new LetterEntity();
         e.setId(UUID.randomUUID());
-        e.setName(name);
-        e.setCountry(country.toUpperCase());
+        e.setName(safe(name));
+        e.setCountry(safe(country).toUpperCase()); // nur hübsch machen
         e.setStatus("waiting");
-        letterRepo.save(e);
 
-        // Nur die ID als Message in Queue
-        amqpTemplate.convertAndSend(letterQueue, e.getId().toString());
+        letterRepo.save(e);
+        publisher.publishLetter(e.getId()); // nur ID in Queue
         return ResponseEntity.ok(e.getId());
     }
 
+    // --- PACKAGE -------------------------------------------------------------
+
     @PostMapping("/package/{weight}/{name}")
     public ResponseEntity<UUID> sendPackage(
-            @PathVariable("weight") BigDecimal weight,
-            @PathVariable("name")   String name
+            @PathVariable BigDecimal weight,
+            @PathVariable String name
     ) {
         PackageEntity p = new PackageEntity();
         p.setId(UUID.randomUUID());
-        p.setName(name);
+        p.setName(safe(name));
         p.setWeightKg(weight);
         p.setStatus("waiting");
-        packageRepo.save(p);
 
-        amqpTemplate.convertAndSend(packageQueue, p.getId().toString());
+        packageRepo.save(p);
+        publisher.publishPackage(p.getId()); // nur ID in Queue
         return ResponseEntity.ok(p.getId());
     }
 
+    // --- STATUS --------------------------------------------------------------
 
-    // GET /api/status
     @GetMapping("/status")
     public ResponseEntity<List<StatusItem>> status() {
         List<StatusItem> out = new ArrayList<>();
-
         letterRepo.findAll().forEach(l ->
                 out.add(new StatusItem("LETTER", l.getId(), l.getName(), l.getCountry(), null, l.getStatus()))
         );
         packageRepo.findAll().forEach(p ->
                 out.add(new StatusItem("PACKAGE", p.getId(), p.getName(), null, p.getWeightKg(), p.getStatus()))
         );
-
         return ResponseEntity.ok(out);
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s.trim();
     }
 }

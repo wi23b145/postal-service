@@ -13,14 +13,16 @@ public class MessagePublisher {
     private final String letterQueue;
     private final String packQueue;
 
-    public MessagePublisher(RabbitTemplate rabbit,
-                            @Value("${app.queues.letter}") String letterQueue,
-                            @Value("${app.queues.pack}") String packQueue) {
+    public MessagePublisher(
+            RabbitTemplate rabbit,
+            @Value("${app.queues.letter}") String letterQueue,
+            @Value("${app.queues.pack}") String packQueue
+    ) {
         this.rabbit = rabbit;
         this.letterQueue = letterQueue;
         this.packQueue = packQueue;
     }
 
-    public void publishLetter(UUID id) { rabbit.convertAndSend(letterQueue, id.toString()); }
-    public void publishPackage(UUID id) { rabbit.convertAndSend(packQueue, id.toString()); }
+    public void publishLetter(UUID id)  { rabbit.convertAndSend(letterQueue, id.toString()); }
+    public void publishPackage(UUID id) { rabbit.convertAndSend(packQueue,  id.toString()); }
 }
