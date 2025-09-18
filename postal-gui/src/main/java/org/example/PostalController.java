@@ -1,4 +1,5 @@
 package org.example;
+
 import org.example.model.StatusItem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 public class PostalController {
     // FXML-Injektionen
     @FXML private TextField letterNameField;
@@ -30,17 +32,34 @@ public class PostalController {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
-    private final String baseUrl = System.getenv().getOrDefault("REST_URL", "http://localhost:8080");
+    private final String baseUrl = System.getenv().getOrDefault("REST_URL", "http://localhost:8082");
 
     @FXML
     public void initialize() {
         // Table-Columns an Model-Properties binden
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
-        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
         weightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // ID: echte UUID weiterhin als Value (für Tooltip), aber anzeigen nur laufende Nummer
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setText("ID");
+        idCol.setSortable(false); // stabil, unabhängig von anderer Sortierung
+        idCol.setCellFactory(col -> new TableCell<StatusItem, String>() {
+            @Override
+            protected void updateItem(String uuid, boolean empty) {
+                super.updateItem(uuid, empty);
+                if (empty) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(String.valueOf(getIndex() + 1)); // 1,2,3,...
+                    setTooltip((uuid == null || uuid.isBlank()) ? null : new Tooltip(uuid));
+                }
+            }
+        });
     }
 
     @FXML
@@ -106,7 +125,7 @@ public class PostalController {
             for (var m : raw) {
                 StatusItem s = new StatusItem();
                 s.setType(str(m.get("type")));
-                s.setId(str(m.get("id")));
+                s.setId(str(m.get("id"))); // bleibt im Model für Tooltip erhalten
                 s.setName(str(m.get("name")));
                 s.setCountry(str(m.get("country")));
                 Object w = m.get("weightKg");
@@ -131,4 +150,3 @@ public class PostalController {
         return java.net.URLEncoder.encode(s == null ? "" : s.trim(), StandardCharsets.UTF_8);
     }
 }
-
