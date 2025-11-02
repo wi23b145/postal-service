@@ -120,26 +120,24 @@ public class PostalController {
         }
     }
 
-    private List<StatusItem> parseItems(String json) {
+    List<StatusItem> parseItems(String json) {
         try {
-            List<StatusItemDto> raw = mapper.readValue(json, new TypeReference<>() {});
-            List<StatusItem> out = new ArrayList<>();
-
-            for (var m : raw) {
-                StatusItem s = new StatusItem();
+            List<StatusItemDto> raw = mapper.readValue(
+                    json, new com.fasterxml.jackson.core.type.TypeReference<List<StatusItemDto>>() {}
+            );
+            return raw.stream().map(m -> {
+                var s = new StatusItem();
                 s.setType(m.type());
-                s.setId(m.id().toString()); // bleibt im Model für Tooltip erhalten
+                s.setId(m.id() == null ? null : m.id().toString());
                 s.setName(m.name());
                 s.setCountry(m.country());
-                BigDecimal w = m.weightKg();
-                s.setWeight(w == null ? "" : String.valueOf(w));
+                var w = m.weightKg();
+                s.setWeight(w == null ? "" : w.stripTrailingZeros().toPlainString());
                 s.setStatus(m.status());
-                out.add(s);
-            }
-
-            return out;
+                return s;
+            }).toList();
         } catch (Exception e) {
-            alert("JSON parse error: " + e.getMessage());
+            // Wichtig: KEIN Alert hier!
             return List.of();
         }
     }

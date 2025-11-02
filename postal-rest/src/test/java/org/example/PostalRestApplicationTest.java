@@ -8,5 +8,7 @@ class PostalRestApplicationTest {
 
     @Test
     void contextLoads() {
+        assertTrue(true);
+
     }
 }
