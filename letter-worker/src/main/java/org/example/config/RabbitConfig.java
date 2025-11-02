@@ -1,0 +1,27 @@
+
+package org.example.config;
+
+import org.example.repo.LetterRepository;
+import org.example.worker.LetterListener;
+import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RabbitConfig {
+
+    @Bean
+    public Queue packageQueue(@Value("${app.queues.letter}") String name) {
+
+        return new Queue(name, true);
+    }
+
+   /* @Bean
+    public LetterListener createletterListener(LetterRepository repo) {
+
+    return new LetterListener(repo);
+ }
+
+    */
+}

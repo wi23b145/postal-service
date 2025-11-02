@@ -80,7 +80,7 @@ public class ApiController {
         packageRepo.findAll().forEach(p ->
                 out.add(new StatusItem("PACKAGE", p.getId(), p.getName(), null, p.getWeightKg(), p.getStatus()))
         );
-        return ResponseEntity.ok(out);
+        return ResponseEntity.ok(out); // created passender laut REST Anforderungen
     }
 
     private String safe(String s) {
