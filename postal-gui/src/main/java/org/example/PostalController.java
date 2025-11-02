@@ -45,7 +45,7 @@ public class PostalController {
         weightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // ID: echte UUID weiterhin als Value (für Tooltip), aber anzeigen nur laufende Nummer
+
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setText("ID");
         idCol.setSortable(false); // stabil, unabhängig von anderer Sortierung
