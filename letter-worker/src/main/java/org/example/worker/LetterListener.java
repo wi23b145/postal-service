@@ -4,6 +4,7 @@ import org.example.entities.LetterEntity;
 import org.example.repo.LetterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,9 @@ public class LetterListener {
 
     public LetterListener(LetterRepository repo) {
         this.repo = repo;
+
     }
+
 
     @RabbitListener(queues = "${app.queues.letter}")
     public void onMessage(String idAsString) {

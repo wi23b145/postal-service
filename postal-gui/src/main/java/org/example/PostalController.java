@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.dto.StatusItemDto;
 import org.example.model.StatusItem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -120,19 +122,21 @@ public class PostalController {
 
     private List<StatusItem> parseItems(String json) {
         try {
-            List<Map<String, Object>> raw = mapper.readValue(json, new TypeReference<>() {});
+            List<StatusItemDto> raw = mapper.readValue(json, new TypeReference<>() {});
             List<StatusItem> out = new ArrayList<>();
+
             for (var m : raw) {
                 StatusItem s = new StatusItem();
-                s.setType(str(m.get("type")));
-                s.setId(str(m.get("id"))); // bleibt im Model für Tooltip erhalten
-                s.setName(str(m.get("name")));
-                s.setCountry(str(m.get("country")));
-                Object w = m.get("weightKg");
+                s.setType(m.type());
+                s.setId(m.id().toString()); // bleibt im Model für Tooltip erhalten
+                s.setName(m.name());
+                s.setCountry(m.country());
+                BigDecimal w = m.weightKg();
                 s.setWeight(w == null ? "" : String.valueOf(w));
-                s.setStatus(str(m.get("status")));
+                s.setStatus(m.status());
                 out.add(s);
             }
+
             return out;
         } catch (Exception e) {
             alert("JSON parse error: " + e.getMessage());

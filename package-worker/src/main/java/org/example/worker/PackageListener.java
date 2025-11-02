@@ -1,9 +1,11 @@
 package org.example.worker;
 
+import com.rabbitmq.client.AMQP;
 import org.example.entities.PackageEntity;
 import org.example.repo.PackageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,8 @@ public class PackageListener {
     public PackageListener(PackageRepository repo) {
         this.repo = repo;
     }
+
+
 
     @RabbitListener(queues = "${app.queues.pack}")
     public void onMessage(String idAsString) {
