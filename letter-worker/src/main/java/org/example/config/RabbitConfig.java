@@ -12,16 +12,10 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     @Bean
-    public Queue packageQueue(@Value("${app.queues.letter}") String name) {
+    public Queue letterQueue(@Value("${app.queues.letter}") String name) {
 
         return new Queue(name, true);
     }
 
-   /* @Bean
-    public LetterListener createletterListener(LetterRepository repo) {
 
-    return new LetterListener(repo);
- }
-
-    */
 }

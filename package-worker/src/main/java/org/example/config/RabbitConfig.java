@@ -16,9 +16,5 @@ public class RabbitConfig {
         return new Queue(name, true);
     }
 
-    @Bean
-    public Queue packageQueue2(@Value("Halloooo") String name) {
-        // durable=true, damit die Queue auf dem Broker bestehen bleibt
-        return new Queue(name, true);
-    }
+
 }
